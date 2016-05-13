@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load l10n %}
+{% load humanize %}
+
+{% block title %}{{ item.title }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/components/slidenav.almost-flat.min.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}css/components/slider.almost-flat.min.css" />
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+<section class="default">
+	<div class="uk-alert uk-alert-warning" data-uk-alert>
+		<a href="" class="uk-alert-close uk-close"></a>
+		{% for message in messages %}
+		<p data-type="{{ message.tags }}">{{ message }}</p>
+		{% endfor %}
+	</div>
+</section>
+{% endif %}
+
+{% if item %}
+<header>
+	{% if item.backdrop_path %}
+	<img alt="" src="{{ URL_BACKDROP }}{{ item.backdrop_path }}" id="backdrop" />
+	{% endif %}
+
+	<a href="//www.themoviedb.org/movie/{{ item.id }}/edit" target="_blank" style="position:absolute; top:20px; right:30px; z-index:1">Editar</a>
+
+	{% if item.poster_path %}
+	<a href="{{ URL_POSTER_BIG }}{{ item.poster_path }}" target="_blank" title="">
+		<img alt="" src="{{ URL_POSTER }}{{ item.poster_path }}" id="poster" />
+	</a>
+	{% endif %}
+
+	<div id="info">
+		{% if item.original_title != item.title %}
+		<div>({{ item.original_title|safe }})</div>
+		{% endif %}
+
+		<h1>{{ item.title|safe }}</h1>
+
+		{% if item.tagline %}
+		<h4>{{ item.tagline|safe }}</h4>
+		{% endif %}
+
+		<ul class="uk-subnav uk-subnav-line">
+			{% if item.release_date_dt %}
+			<li>{{ item.release_date_dt.year }}</li>
+			{% endif %}
+
+			{% if item.runtime_dt %}
+			<li>{{ item.runtime_dt|date:'G\hi' }}</li>
+			{% endif %}
+
+			{% if item.genres %}
+			<li>
+				{% for genre in item.genres %}
+				{{ genre.name }}{% if forloop.revcounter0 %}, {% endif %}
+				{% endfor %}
+			</li>
+			{% endif %}
+
+			{% if item.imdb_id %}
+			<li>
+				<a href="{{ URL_IMDB_MOVIE }}{{ item.imdb_id }}" target="_blank" rel="nofollow">
+					<img alt="IMDb" src="{{ STATIC_URL }}img/imdb.png" />
+				</a>
+			</li>
+			{% endif %}
+
+			{% if item.vote_average %}
+			<li>
+				<span id="rate"></span>
+			</li>
+			{% endif %}
+		</ul>
+	</div>
+</header>
+
+<section class="detail">
+	<div class="uk-grid">
+		<div class="uk-width-4-10">
+			<h2>{% trans 'ABOUT THE MOVIE' %}</h2>
+
+			<dl class="detail-list">
+				{% if item.overview %}
+				<dt>{% trans 'Synopsis' %}</dt>
+				<dd>{{ item.overview|safe }}</dd>
+				{% endif %}
+
+				{% if item.release_date_dt %}
+				<dt>{% trans 'Release date' %}</dt>
+				<dd>{{ item.release_date_dt }}</dd>
+				{% endif %}
+
+				{% if item.production_companies %}
+				<dt>{% trans 'Studios' %}</dt>
+				<dd>
+					{% for studio in item.production_companies %}
+					{{ studio.name }}{% if forloop.revcounter0 %}, {% endif %}
+					{% endfor %}
+				</dd>
+				{% endif %}
+
+				{% if item.budget %}
+				<dt>{% trans 'Budget' %}</dt>
+				<dd>
+					US$
+					{% if item.budget > 999999 %}
+					{{ item.budget|intword }}
+					{% else %}
+					{{ item.budget|intcomma }}
+					{% endif %}
+				</dd>
+				{% endif %}
+
+				{% if item.revenue %}
+				<dt>{% trans 'Revenue' %}</dt>
+				<dd>
+					US$
+					{% if item.revenue > 999999 %}
+					{{ item.revenue|intword }}
+					{% else %}
+					{{ item.revenue|intcomma }}
+					{% endif %}
+				</dd>
+				{% endif %}
+
+				{% if item.abridged_directors %}
+				<dt>Directed by</dt>
+				<dd>
+					{% for director in item.abridged_directors %}
+					{{ director.name }}{% if forloop.revcounter0 %}, {% endif %}
+					{% endfor %}
+				</dd>
+				{% endif %}
+
+				{% if item.abridged_cast %}
+				<dt>Starring</dt>
+				<dd>
+					{% for actor in item.abridged_cast %}
+					{{ actor.name }}{% if forloop.revcounter0 %}, {% endif %}
+					{% endfor %}
+				</dd>
+				{% endif %}
+
+				{% if item.homepage %}
+				<dt>{% trans 'Homepage' %}</dt>
+				<dd>
+					<a href="{{ item.homepage }}" target="_blank" rel="nofollow">{{ item.homepage }} <span class="uk-icon-external-link"></span></a>
+				</dd>
+				{% endif %}
+			</dl>
+		</div>
+
+		{% with item.videos.results as videos %}
+		{% if videos %}
+		<div class="uk-width-5-10 uk-push-1-10">
+
+			<h2>{% trans 'MIDIA' %}</h2>
+
+			<ul class="uk-switcher" id="midia" style="height:462px">
+				{% for video in videos %}
+				<li>
+					{% if video.site == 'YouTube' %}
+					<div class="video-container">
+						<iframe width="640" height="360" src="//www.youtube.com/embed/{{ video.key }}?rel=0&amp;controls=1&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+					</div>
+					{% else %}
+					{{ video.site }}
+					{% endif %}
+				</li>
+				{% endfor %}
+
+				{% for image in item.images.backdrops %}
+				<li>
+					<a href="//image.tmdb.org/t/p/w1920/{{ image.file_path }}" target="_blank">
+						<img src="//image.tmdb.org/t/p/w780/{{ image.file_path }}" alt="" width="100%" />
+					</a>
+				</li>
+				{% endfor %}
+			</ul>
+
+			<div class="uk-slidenav-position" data-uk-slider="{infinite:false}">
+				<div class="uk-slider-container">
+					<ul class="uk-slider uk-grid-width-1-5 slide-nav" data-uk-switcher="{connect:'#midia'}">
+						{% for video in videos %}
+						<li>
+							<a href="" title="{{ video.name }}">
+								<div style="background-image:url('//img.youtube.com/vi/{{ video.key }}/default.jpg')">
+									<span class="uk-icon-play uk-icon-medium"></span>
+								</div>
+							</a>
+						</li>
+						{% endfor %}
+
+						{% for image in item.images.backdrops %}
+						<li>
+							<a href="" title="Imagem {{ forloop.counter }}">
+								<div style="background-image:url('//image.tmdb.org/t/p/w150/{{ image.file_path }}')"></div>
+							</a>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+
+				<a href="" class="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slider-item="previous"></a>
+				<a href="" class="uk-slidenav uk-slidenav-contrast uk-slidenav-next"     data-uk-slider-item="next"></a>
+			</div>
+		</div>
+		{% endif %}
+		{% endwith %}
+	</div>
+
+	{% with item.similar.results as similars %}
+	{% if similars %}
+    <h2>{% trans 'Related Movies' %}</h2>
+
+	<div class="grid-inline">
+		{% for similar in similars %}
+		<div class="cover grid-col">
+	        <div class="cover-bg">
+                <a href="{% url 'detail' similar.id %}">
+					<div class="img-wrapper">
+    					<img alt="" src="{{ STATIC_URL }}img/default.png" class="img-default">
+
+						{% if similar.poster_path %}
+        				<img alt="" src="{{ URL_POSTER }}{{ similar.poster_path }}" class="img">
+        				{% endif %}
+					</div>
+                </a>
+	            <div class="info">
+	                <div class="info-primary">
+	                    <a href="{% url 'detail' similar.id %}" title="{{ similar.title }}">{{ similar.title }}</a>
+	                </div>
+	                <div class="info-secondary">
+	                	{{ similar.year }}
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+		{% endfor %}
+	</div>
+	{% endif %}
+	{% endwith %}
+</section>
+{% endif %}
+{% endblock %}
+
+
+{% block footer %}
+<script class="script" src="{{ STATIC_URL }}js/components/slider.min.js"></script>
+<script class="script" src="{{ STATIC_URL }}js/raty/jquery.raty.js"></script>
+
+<script class="script">
+{% if item.vote_average %}
+$('#rate').raty({
+	score    : {{ item.vote_average|unlocalize }} / 2,
+	path     : '{{ STATIC_URL }}js/raty',
+	readOnly : true,
+	hints    : [{{ item.vote_average }},{{ item.vote_average }},{{ item.vote_average }},{{ item.vote_average }},{{ item.vote_average }}]
+});
+{% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Search Results for' %} "{{ search }}"{% endblock %}
+
+{% block content %}
+<div class="toolbar">
+    <span class="text-secundary uk-float-right">{% blocktrans count total_items as n %}{{ n }} result found{% plural %}{{ n }} results found{% endblocktrans %}</span>
+    <h2>{% trans 'Search Results for' %} "{{ search }}"</h2>
+</div>
+
+<section class="default">
+	{% if messages %}
+	<div class="uk-alert uk-alert-warning" data-uk-alert>
+		<a href="" class="uk-alert-close uk-close"></a>
+		{% for message in messages %}
+		<p data-type="{{ message.tags }}">{{ message }}</p>
+		{% endfor %}
+	</div>
+	{% endif %}
+
+	{% if items %}
+    <ul class="uk-list uk-list-line" id="search-list">
+
+    	{% for item in items %}
+		<li>
+			<div class="search-cover">
+				<a href="{% url 'detail' item.id %}" data-load="inner">
+					{% if item.poster_path %}
+					<img alt="" src="{{ URL_POSTER }}{{ item.poster_path }}" />
+					{% else %}
+					<img alt="" src="{{ URL_IMG_ERROR }}" />
+					{% endif %}
+				</a>
+				<div>
+					<h3 style="margin:0">
+						<a href="{% url 'detail' item.id %}" data-load="inner">
+							{{ item.title }}
+							{% if item.year %}<span class="cover-subtitle">({{ item.year }})</span>{% endif %}
+						</a>
+					</h3>
+
+					<div class="cover-subtitle">
+						{{ item.original_title }}
+					</div>
+				</div>
+				<span class="uk-clearfix"></span>
+			</div>
+		</li>
+		{% endfor %}
+
+    </ul>
+	{% else %}
+	<p>{% trans 'Results not found' %}</p>
+	{% endif %}
+</section>
+{% endblock %}
+
+
+{% block footer %}
+<script class="script">
+pagination({{ page }}, {{ total_pages }});
+</script>
+{% endblock %}

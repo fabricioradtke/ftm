@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/components/slidenav.almost-flat.min.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}css/components/slideshow.almost-flat.min.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}css/components/slider.almost-flat.min.css" />
+{% endblock %}
+
+{% block title %}{% trans 'Home' %}{% endblock %}
+
+{% block content %}
+{% if messages %}
+<section class="default">
+	<div class="uk-alert uk-alert-warning" data-uk-alert>
+		<a href="" class="uk-alert-close uk-close"></a>
+		{% for message in messages %}
+		<p data-type="{{ message.tags }}">{{ message }}</p>
+		{% endfor %}
+	</div>
+</section>
+{% endif %}
+
+{% if categories %}
+<section class="uk-slidenav-position" data-uk-slideshow="{autoplay:true, pauseOnHover:true}" id="slider">
+	<ul class="uk-slideshow uk-overlay-active">
+		{% for item in featured %}
+
+	    <li>
+			<img alt="{{ item.title }}" src="{{ URL_BACKDROP }}{{ item.backdrop_path }}" />
+			<div class="uk-overlay-panel uk-overlay-fade uk-overlay-background">
+				<div class="slider-info">
+					<a href="{% url 'detail' item.id %}" class="slider-title">{{ item.title }}</a>
+				</div>
+			</div>
+	    </li>
+	    {% endfor %}
+	</ul>
+
+	<a href="" class="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slideshow-item="previous"></a>
+	<a href="" class="uk-slidenav uk-slidenav-contrast uk-slidenav-next"     data-uk-slideshow-item="next"></a>
+</section>
+
+{% for category in categories %}
+{% if category.items %}
+<section class="home">
+	<div>
+    	<h2>{% trans category.name %}</h2>
+    	<a href="{% url 'explore' %}?sort={{ category.link }}" class="text-secundary">{% trans 'Show More' %}</a>
+    </div>
+
+	<div class="uk-slidenav-position" data-uk-slider="{infinite:false}">
+		<div class="uk-slider-container">
+			<ul class="uk-slider grid-inline">
+				{% for item in category.items %}
+				<li class="cover grid-col">
+					<div class="cover-bg">
+		                <a href="{% url 'detail' item.id %}">
+							<div class="img-wrapper">
+		    					<img alt="" src="{{ STATIC_URL }}img/default.png" class="img-default">
+		
+								{% if item.poster_path %}
+		        				<img alt="" src="{{ URL_POSTER }}{{ item.poster_path }}" class="img">
+		        				{% endif %}
+							</div>
+		                </a>
+			            <div class="info">
+			                <div class="info-primary">
+			                    <a href="{% url 'detail' item.id %}" title="{{ item.title }}">{{ item.title }}</a>
+			                </div>
+			                <div class="info-secondary">
+			                	{{ item.year }}
+			                </div>
+			            </div>
+			        </div>
+				</li>
+				{% endfor %}
+			</ul>
+		</div>
+	
+		<a href="" class="uk-slidenav uk-slidenav-contrast uk-slidenav-previous" data-uk-slider-item="previous"></a>
+		<a href="" class="uk-slidenav uk-slidenav-contrast uk-slidenav-next"     data-uk-slider-item="next"></a>
+	</div>
+
+</section>
+
+{% if forloop.revcounter0 %}
+<hr />
+{% endif %}
+
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+<script src="{{ STATIC_URL }}js/components/slideshow.min.js"></script>
+<script src="{{ STATIC_URL }}js/components/slider.min.js"></script>
+{% endblock %}

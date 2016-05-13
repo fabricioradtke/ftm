@@ -1,0 +1,88 @@
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport"    content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="The Movie Guide" />
+		<meta name="keywords"    content="The Movie Guide" />
+		<meta name="author"      content="Fabrício Radtke" />
+
+		<title>{% block title %}{% endblock %} - The Movie Guide</title>
+
+		<link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" />
+		<!--<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:400,600&amp;subset=latin,latin-ext" />-->
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/uikit.almost-flat.min.css?v={% now 'U' %}" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/components/notify.almost-flat.min.css" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/style.css?v={% now 'U' %}" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/style-x.css?v={% now 'U' %}" />
+
+		<!--[if lt IE 9]>
+		<script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="//oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+		<![endif]-->
+
+		{% block head %}{% endblock %}
+	</head>
+	<body>
+		<!-- Sidebar
+		================================================== -->
+		{% include 'sidebar.html' %}
+
+
+		<!-- Content
+		================================================== -->
+		<div id="main">
+			<div id="content">
+				{% block content %}{% endblock %}
+			</div>
+
+			<!-- Footer
+			================================================== -->
+		    <footer>
+		        <ul class="uk-float-right">
+		            <li><a href="{% url 'home' %}">{% trans 'Home' %}</a></li>
+		            <li><a href="{% url 'home' %}">{% trans 'Contact Us' %}</a></li>
+		            <li><a href="{% url 'home' %}">{% trans 'About Us' %}</a></li>
+		            <li>
+		            	<form method="post" action="{% url 'set_language' %}" class="uk-form uk-margin-small-left submit-change">{% csrf_token %}
+							<input type="hidden" name="next" value="{{ URL_CURRENT }}" />
+
+							<select name="language" class="uk-form-small">
+								{% get_language_info_list for LANGUAGES as languages %}
+								{% for i in languages %}
+								<option value="{{ i.code }}" {% if i.code == LANGUAGE_CODE %}selected{% endif %}>{{ i.name_local }}</option>
+								{% endfor %}
+							</select>
+						</form>
+					</li>
+		        </ul>
+
+			    <strong>The Movie Guide &copy; 2015</strong>
+		        <span class="uk-clearfix"></span>
+		    </footer>
+
+			<div id="loading">
+				<span id="loading-inner">
+					<span class="uk-icon-spinner uk-icon-large uk-icon-spin"></span>
+				</span>
+			</div>
+		</div>
+
+		<!--[if lt IE 9]>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<![else]-->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<!--[endif]-->
+
+        <script src="{{ STATIC_URL }}js/uikit.min.js?v={% now 'U' %}"></script>
+        <script src="{{ STATIC_URL }}js/components/notify.min.js"></script>
+        <script src="{{ STATIC_URL }}js/script.js?v={% now 'U' %}"></script>
+
+        {% block footer %}
+        <script class="script"></script>
+        {% endblock %}
+	</body>
+</html>

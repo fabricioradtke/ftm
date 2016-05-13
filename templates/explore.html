@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Explore' %}{% endblock %}
+
+{% block content %}
+<div class="toolbar">
+	<form method="get" action="{% url 'explore' %}" class="uk-form uk-float-right submit-change">
+		<ul class="uk-subnav uk-subnav-pill">
+			<li>
+				<label>{% trans 'Genre' %}</label>
+				<select name="genre">
+					<option value="">{% trans 'All' %}</option>
+					{% for i in genres %}
+					<option value="{{ i.id }}" {% if i.id == genre %}selected{% endif %}>{{ i.name }}</option>
+					{% endfor %}
+				</select>
+			</li>
+
+			<li>
+				<label>{% trans 'Sort by' %}</label>
+				<select name="sort">
+					<option value="popular"       {% if sort == 'popular'       %}selected{% endif %}>{% trans 'Popular'         %}</option>
+					<option value="top_rated"     {% if sort == 'top_rated'     %}selected{% endif %}>{% trans 'Top Rated'       %}</option>
+					<option value="last_releases" {% if sort == 'last_releases' %}selected{% endif %}>{% trans 'Last Releases'   %}</option>
+					<option value="upcomming"     {% if sort == 'upcomming'     %}selected{% endif %}>{% trans 'Upcoming'        %}</option>
+					<option value="revenue"       {% if sort == 'revenue'       %}selected{% endif %}>{% trans 'Higher Revenues' %}</option>
+				</select>
+			</li>
+		</ul>
+	</form>
+
+	<h2>{% trans 'Explore' %}</h2>
+</div>
+
+<section class="default">
+	{% if messages %}
+	<div class="uk-alert uk-alert-warning" data-uk-alert>
+		<a href="" class="uk-alert-close uk-close"></a>
+		{% for message in messages %}
+		<p data-type="{{ message.tags }}">{{ message }}</p>
+		{% endfor %}
+	</div>
+	{% endif %}
+
+	<div class="grid">
+		{% for item in items %}
+		<div class="cover grid-col">
+		    <div class="cover-bg">
+		        <a href="{% url 'detail' item.id %}">
+					<div class="img-wrapper">
+						<img alt="" src="{{ STATIC_URL }}img/default.png" class="img-default" />
+		
+						{% if item.poster_path %}
+						<img alt="" src="{{ URL_POSTER }}{{ item.poster_path }}" class="img" />
+						{% endif %}
+					</div>
+		        </a>
+		        <div class="info">
+		            <div class="info-primary">
+		                <a href="{% url 'detail' item.id %}" title="{{ item.title }}">{{ item.title }}</a>
+		            </div>
+		            <div class="info-secondary">
+		            	<a href="#">{{ item.year }}</a>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+		{% endfor %}
+	</div>
+</section>
+{% endblock %}

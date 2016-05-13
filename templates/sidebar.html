@@ -1,0 +1,71 @@
+{% load i18n %}
+
+<div id="sidebar">
+    <div id="logo">
+        <a href="{% url 'home' %}">
+            <img alt="The Movie Guide" src="{{ STATIC_URL }}img/default.png" />
+            <div>
+                The Movie<br />
+                <span>Guide</span>
+            </div>
+        </a>
+    </div>
+
+    <div id="search">
+        <form method="get" action="" class="uk-form">
+            <div class="uk-form-icon">
+                <span class="uk-icon-search"></span>
+                <input type="text" name="search" value="{{ search }}" class="uk-text" placeholder="{% trans 'Search' %}..." />
+            </div>
+        </form>
+    </div>
+
+    <ul class="uk-nav" id="menu">
+        <li {% if app == 'home' %}class="active"{% endif %}>
+            <a href="{% url 'home' %}" data-load="menu">
+                <span class="uk-icon-home"></span>
+                {% trans 'Home' %}
+            </a>
+        </li>
+        <li {% if app == 'explore' %}class="active"{% endif %}>
+            <a href="{% url 'explore' %}" data-load="menu">
+                <span class="uk-icon-rocket"></span>
+                {% trans 'Explore' %}
+            </a>
+        </li>
+        <li {% if app == 'favorites' %}class="active"{% endif %}>
+            <a href="{% url 'home' %}" data-load="menu">
+                <span class="uk-icon-heart"></span>
+                {% trans 'Favorites' %}
+            </a>
+        </li>
+        <li {% if app == 'watch-later' %}class="active"{% endif %}>
+            <a href="{% url 'home' %}" data-load="menu">
+                <span class="uk-icon-clock-o"></span>
+                {% trans 'Watch later' %}
+            </a>
+        </li>
+        <li {% if app == 'history' %}class="active"{% endif %}>
+            <a href="{% url 'home' %}" data-load="menu">
+                <span class="uk-icon-calendar"></span>
+                {% trans 'History' %}
+            </a>
+        </li>
+    </ul>
+
+    <div id="user-area" data-uk-dropdown="{mode:'click'}">
+        <a href="#">
+            <img alt="" src="//placehold.it/32x32/000/FFF/" />
+            <span id="user-info">Fabrício Radtke</span>
+            <span class="uk-icon-caret-down"></span>
+        </a>
+
+        <div class="uk-dropdown uk-dropdown-small2 uk-dropdown-up">
+            <ul class="uk-nav uk-nav-dropdown">
+                <li><a href="#">{% trans 'Profile' %}</a></li>
+                <li class="uk-nav-divider"></li>
+                <li><a href="#">{% trans 'Logout' %}</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
